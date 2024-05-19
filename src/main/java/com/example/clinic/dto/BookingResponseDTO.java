@@ -4,6 +4,7 @@ import com.example.clinic.entity.Doctor;
 import com.example.clinic.entity.DoctorSchedule;
 import com.example.clinic.entity.Patient;
 import com.example.clinic.enums.StatusBooking;
+import com.example.clinic.enums.StatusPayment;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,8 @@ public class BookingResponseDTO {
     String appointmentTime;
 
     private StatusBooking statusBooking;
+
+    private StatusPayment statusPayment;
 
     private String conclude;
 

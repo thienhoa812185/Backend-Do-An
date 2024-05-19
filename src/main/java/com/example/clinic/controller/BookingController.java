@@ -9,6 +9,7 @@ import com.example.clinic.entity.Booking;
 import com.example.clinic.entity.DoctorSchedule;
 import com.example.clinic.entity.Patient;
 import com.example.clinic.enums.StatusBooking;
+import com.example.clinic.enums.StatusPayment;
 import com.example.clinic.service.BookingService;
 import com.example.clinic.service.DoctorScheduleService;
 import com.example.clinic.service.PatientService;
@@ -84,6 +85,7 @@ public class BookingController {
             Booking saveBooking = Booking.builder()
                     .note(bookingDTO.getNote())
                     .statusBooking(StatusBooking.PENDING)
+                    .statusPayment(StatusPayment.UNPAID)
                     .appointmentTime(bookingDTO.getAppointmentTime())
                     .patient(patientCurrent)
                     .doctorSchedule(doctorScheduleCurrent)
@@ -134,6 +136,17 @@ public class BookingController {
         String precaution = requestBody.get("precaution");
         booking.setConclude(conclude);
         booking.setPrecaution(precaution);
+        bookingService.save(booking);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Update success!!!!!!!!!");
+    }
+
+    @PostMapping("/updateStatusMethod/{idBooking}")
+    public ResponseEntity<?> updateStatusMethod(@PathVariable Integer idBooking, @RequestBody Map<String, String> requestBody) {
+
+        Booking booking = bookingService.getBookingById(idBooking);
+        String statusMethod = requestBody.get("statusMethod");
+        booking.setStatusPayment(StatusPayment.valueOf(statusMethod.toUpperCase()));
         bookingService.save(booking);
 
         return ResponseEntity.status(HttpStatus.OK).body("Update success!!!!!!!!!");

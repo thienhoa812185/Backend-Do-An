@@ -1,6 +1,7 @@
 package com.example.clinic.entity;
 
 import com.example.clinic.enums.StatusBooking;
+import com.example.clinic.enums.StatusPayment;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,10 @@ public class Booking {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private StatusBooking statusBooking;
+
+    @Column(name = "status_payment")
+    @Enumerated(EnumType.STRING)
+    private StatusPayment statusPayment;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "patient_id")

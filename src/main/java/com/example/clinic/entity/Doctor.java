@@ -23,6 +23,8 @@ public class Doctor {
 
     private String name;
     private String description;
+    private String education;
+    private String experience;
     private String position;
     private String image;
     private Double examination_Price;
