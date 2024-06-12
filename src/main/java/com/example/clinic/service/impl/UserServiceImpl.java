@@ -1,5 +1,6 @@
 package com.example.clinic.service.impl;
 
+import com.example.clinic.dto.ChangePasswordDTO;
 import com.example.clinic.dto.RegisterDTO;
 import com.example.clinic.dto.RoleResponse;
 import com.example.clinic.entity.Role;
@@ -98,4 +99,16 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode("12345678"));
         userRepository.save(user);
     }
+
+    @Override
+    public Boolean changePassword(ChangePasswordDTO changePasswordDTO) {
+        User user = getUserByUsername(changePasswordDTO.getUsername());
+        if (!passwordEncoder.matches(changePasswordDTO.getPassword(), user.getPassword())) {
+            return false;
+        }
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        userRepository.save(user);
+        return true;
+    }
+
 }

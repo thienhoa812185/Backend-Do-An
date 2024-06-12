@@ -28,6 +28,6 @@ public class Speciality {
     private String image;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "speciality", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "speciality")
     private List<Doctor> doctors;
 }

@@ -65,6 +65,11 @@ public class DoctorController {
         return ResponseEntity.status(HttpStatus.OK).body(doctorService.getDoctorByUsername(username));
     }
 
+    @GetMapping("/getTheFiveBestDoctor/{specialityId}")
+    public ResponseEntity<?> getTheFiveBestDoctor(@PathVariable Integer specialityId) {
+        return ResponseEntity.status(HttpStatus.OK).body(doctorService.findTop5DoctorsBySpecialityOrderByPointEvaluationDesc(specialityId));
+    }
+
     @PostMapping("/add")
     @Transactional
     public ResponseEntity<?> addDoctor(@RequestParam String name, @RequestParam String description, @RequestParam String position, @RequestParam MultipartFile image, @RequestParam Double examinationPRICE, @RequestParam String examinationADDRESS, @RequestParam String username, @RequestParam String email, @RequestParam String password, @RequestParam String specialityName) {
@@ -113,6 +118,7 @@ public class DoctorController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doctor hasn't existed");
         }
     }
+
     @PutMapping("/updateScheduleDoctor/{id}")
     public ResponseEntity<?> updateScheduleDoctor(@PathVariable Integer id, @RequestBody List<ScheduleTimeDTO> timeOffcial) {
         // Fetch the doctor entity using the provided ID
@@ -153,5 +159,20 @@ public class DoctorController {
         return ResponseEntity.status(HttpStatus.OK).body("Update success!!!!!!!!!");
     }
 
+    @PutMapping("/updateInformationDoctor/{id}")
+    public ResponseEntity<?> updateInformationDoctor(@PathVariable Integer id, @RequestParam String name, @RequestParam String description, @RequestParam String education, @RequestParam String experience, @RequestParam Double price) {
+        Doctor doctor = doctorService.getDoctorById(id);
+        if (doctor == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doctor not found");
+        }
+        doctor.setName(name);
+        doctor.setDescription(description);
+        doctor.setEducation(education);
+        doctor.setExperience(experience);
+        doctor.setExamination_Price(price);
+
+        doctorService.save(doctor);
+        return ResponseEntity.status(HttpStatus.OK).body("Update success!!!!!!!!!");
+    }
 
 }

@@ -1,10 +1,7 @@
 package com.example.clinic.controller;
 
 
-import com.example.clinic.dto.BookingDTO;
-import com.example.clinic.dto.BookingResponseDTO;
-import com.example.clinic.dto.SpecialityRequestDTO;
-import com.example.clinic.dto.WsMessageDTO;
+import com.example.clinic.dto.*;
 import com.example.clinic.entity.Booking;
 import com.example.clinic.entity.DoctorSchedule;
 import com.example.clinic.entity.Patient;
@@ -150,6 +147,15 @@ public class BookingController {
         bookingService.save(booking);
 
         return ResponseEntity.status(HttpStatus.OK).body("Update success!!!!!!!!!");
+    }
+
+    @PostMapping("/checkSlotAvailability")
+    public ResponseEntity<?> checkSlotAvailability(@RequestBody CheckSlotAvailabilityRequestDTO request) {
+        DoctorSchedule doctorSchedule = doctorScheduleService.getDoctorScheduleById(request.getDoctorScheduleId());
+
+        Boolean isDung = bookingService.isSlotAvailable(doctorSchedule, request.getAppointmentTime());
+
+        return ResponseEntity.status(HttpStatus.OK).body(isDung);
     }
 
 }

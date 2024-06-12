@@ -3,6 +3,7 @@ package com.example.clinic.service.impl;
 import com.example.clinic.dto.BookingDTO;
 import com.example.clinic.dto.BookingResponseDTO;
 import com.example.clinic.entity.*;
+import com.example.clinic.enums.StatusBooking;
 import com.example.clinic.repository.BookingRepository;
 import com.example.clinic.repository.DoctorRepository;
 import com.example.clinic.repository.PatientRepository;
@@ -133,6 +134,7 @@ public class BookingServiceImple implements BookingService {
                         .note(booking.getNote())
                         .appointmentTime(booking.getAppointmentTime())
                         .statusBooking(booking.getStatusBooking())
+                        .statusPayment(booking.getStatusPayment())
                         .patient(booking.getPatient())
                         .doctorSchedule(booking.getDoctorSchedule())
                         .doctor(booking.getDoctorSchedule().getDoctor())
@@ -141,6 +143,13 @@ public class BookingServiceImple implements BookingService {
             }
         }
         return bookingResponseDTOList;
+    }
+
+    @Override
+    public Boolean isSlotAvailable(DoctorSchedule doctorSchedule, String appointmentTime) {
+        return !bookingRepository.existsByDoctorScheduleAndAppointmentTimeAndStatusBookingNot(
+                doctorSchedule, appointmentTime, StatusBooking.CANCELLED
+        );
     }
 
 }

@@ -1,6 +1,8 @@
 package com.example.clinic.controller;
 
 
+import com.example.clinic.dto.ChangePasswordDTO;
+import com.example.clinic.dto.LoginDTO;
 import com.example.clinic.dto.RegisterDTO;
 import com.example.clinic.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,8 @@ public class AdminActionController {
     private final UserService userService;
 
     @Autowired
-    public AdminActionController(UserService userService){
-        this.userService=userService;
+    public AdminActionController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping("/createAccountForDoctor")
@@ -43,5 +45,14 @@ public class AdminActionController {
     public ResponseEntity<?> resetUserPassword(@RequestParam(value = "username", required = true) String username) {
         userService.resetUserPassword(username);
         return ResponseEntity.status(HttpStatus.OK).body("OKKK");
+    }
+
+    @PutMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
+        Boolean isChange = userService.changePassword(changePasswordDTO);
+        if (isChange) {
+            return ResponseEntity.status(HttpStatus.OK).body("Password changed successfully.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Current password is incorrect.");
     }
 }

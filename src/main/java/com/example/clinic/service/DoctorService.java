@@ -18,6 +18,7 @@ public interface DoctorService {
     Doctor getDoctorById(Integer id);
     Doctor getDoctorByUsername(String username);
     Doctor addDoctor(DoctorDTO doctor);
+    List<Doctor> findTop5DoctorsBySpecialityOrderByPointEvaluationDesc(Integer specialityId);
 
     void delete(Doctor doctor);
 }

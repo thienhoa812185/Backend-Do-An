@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -133,6 +134,36 @@ public class AuthController {
             return new ResponseEntity<>("Doctor registered success!", HttpStatus.OK);
         }
     }
+
+    @PostMapping("/registerDoctors")
+    public ResponseEntity<?> registerDoctors(@RequestBody List<RegisterDTO> registerDtos) {
+        List<String> responses = new ArrayList<>();
+
+        for (RegisterDTO registerDto : registerDtos) {
+            if (userService.existedByUsername(registerDto.getUsername())) {
+                responses.add("Username " + registerDto.getUsername() + " is taken!");
+            } else {
+                User user = new User();
+
+                user.setUsername(registerDto.getUsername());
+                user.setEmail(registerDto.getEmail());
+                user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+
+                Role roleUser = roleService.getRoleByRoleName(RolesEnum.USER);
+                Role roleDoctor = roleService.getRoleByRoleName(RolesEnum.DOCTOR);
+                Set<Role> roles = new HashSet<>();
+                roles.add(roleUser);
+                roles.add(roleDoctor);
+
+                user.setRoles(roles);
+
+                userService.save(user);
+                responses.add("Doctor " + registerDto.getUsername() + " registered successfully!");
+            }
+        }
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
 
     @GetMapping("/getRole")
     public ResponseEntity<?> getAllRole() {

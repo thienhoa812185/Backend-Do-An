@@ -40,18 +40,27 @@ public class SpecialityController {
     @PostMapping("/add")
     public ResponseEntity<?> addSpeciality(@RequestParam String name, @RequestParam String description, @RequestParam MultipartFile image) {
         try {
+            Speciality speciality = specialityService.getSpecialityByName(name);
+            if (speciality != null) {
+                return ResponseEntity.status(HttpStatus.OK).body("Speciality already exists");
+            }
+
             String pathImage = fileUtils.uploadImage(image);
-            SpecialityRequestDTO specialityRequestDTO =
-                    SpecialityRequestDTO.builder()
-                            .name(name)
-                            .description(description)
-                            .image(pathImage).build();
+            SpecialityRequestDTO specialityRequestDTO = SpecialityRequestDTO.builder()
+                    .name(name)
+                    .description(description)
+                    .image(pathImage)
+                    .build();
+
             specialityService.addSpeciality(specialityRequestDTO);
+
+            return ResponseEntity.status(HttpStatus.OK).body("Add success!");
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("An error occurred: " + e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Add success!!!!!!!!!");
     }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateSpeciality(@PathVariable Integer id, @RequestParam String name, @RequestParam String description) {
@@ -73,12 +82,16 @@ public class SpecialityController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteSpeciality(@PathVariable Integer id) {
-        Speciality speciality = specialityService.getSpecialityById(id);
-        if (speciality != null) {
-            specialityService.delete(speciality);
-            return ResponseEntity.status(HttpStatus.OK).body("Delete success");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("speciality hasn't existed");
+        try {
+            Speciality speciality = specialityService.getSpecialityById(id);
+            if (speciality != null) {
+                specialityService.delete(speciality);
+                return ResponseEntity.status(HttpStatus.OK).body("Delete success");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Speciality hasn't existed");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body("Can not delete the speciality");
         }
     }
 

@@ -11,6 +11,7 @@ import com.example.clinic.repository.ScheduleTimeRepository;
 import com.example.clinic.repository.SpecialityRepository;
 import com.example.clinic.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -81,6 +82,12 @@ public class DoctorServiceImpl implements DoctorService {
 
         doctorOfficial.setDoctorSchedules(doctorSchedules);
         return doctorRepository.save(doctorOfficial);
+    }
+
+    @Override
+    public List<Doctor> findTop5DoctorsBySpecialityOrderByPointEvaluationDesc(Integer specialityId) {
+        PageRequest pageRequest = PageRequest.of(0, 4);
+        return doctorRepository.findTop5DoctorsBySpecialityOrderByPointEvaluationDesc(specialityId, pageRequest);
     }
 
 
