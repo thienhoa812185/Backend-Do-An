@@ -83,16 +83,17 @@ public class BookingController {
                     .note(bookingDTO.getNote())
                     .statusBooking(StatusBooking.PENDING)
                     .statusPayment(StatusPayment.UNPAID)
+                    .price(bookingDTO.getPrice())
                     .appointmentTime(bookingDTO.getAppointmentTime())
                     .patient(patientCurrent)
                     .doctorSchedule(doctorScheduleCurrent)
                     .build();
 
-            bookingService.save(saveBooking);
+            Booking booking = bookingService.save(saveBooking);
 
             WsMessageDTO messageDTO = WsMessageDTO.builder()
                     .message("NEW_DOCTOR_APPOINTMENT")
-                    .data("Mot lich hen da duoc tao moi")
+                    .data(booking.getId())
                     .build();
             messagingTemplate.convertAndSend("/topic/notify", messageDTO);
 
@@ -117,10 +118,10 @@ public class BookingController {
 //
 //        SimpleMailMessage message = new SimpleMailMessage();
 //        message.setFrom("thienhoa812185@gmail.com");
-//        message.setTo("anhlth70@gmail.com");
+//        message.setTo(bookingResponseDTO.getPatient().getEmail());
 //        message.setText(detailBooking);
 //        message.setSubject("Medical Appointment Information");
-
+//
 //        mailSender.send(message);
         return ResponseEntity.status(HttpStatus.OK).body("Update success!!!!!!!!!");
     }

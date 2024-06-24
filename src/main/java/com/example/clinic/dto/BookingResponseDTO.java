@@ -20,6 +20,8 @@ public class BookingResponseDTO {
 
     String appointmentTime;
 
+    private Double price;
+
     private StatusBooking statusBooking;
 
     private StatusPayment statusPayment;

@@ -111,6 +111,51 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/registers")
+    @Transactional
+    public ResponseEntity<?> register(@RequestBody List<RegisterUserDTO> registerUserDtos) {
+        List<String> responseMessages = new ArrayList<>();
+
+        try {
+            for (RegisterUserDTO registerUserDto : registerUserDtos) {
+                if (userService.existedByUsername(registerUserDto.getUsername())) {
+                    responseMessages.add("Username " + registerUserDto.getUsername() + " already exists!");
+                    continue;
+                }
+
+                User user = new User();
+                user.setUsername(registerUserDto.getUsername());
+                user.setEmail(registerUserDto.getEmail());
+                user.setPassword(passwordEncoder.encode(registerUserDto.getPassword()));
+
+                Role role = roleService.getRoleByRoleName(RolesEnum.USER);
+                Set<Role> roles = new HashSet<>();
+                roles.add(role);
+                user.setRoles(roles);
+                userService.save(user);
+
+                Patient patient = new Patient();
+                patient.setAddress(registerUserDto.getAddress());
+                patient.setEmail(registerUserDto.getEmail());
+                patient.setName(registerUserDto.getName());
+                patient.setGender(registerUserDto.getGender());
+                patient.setImage(registerUserDto.getPhoto());
+                patient.setPhone(registerUserDto.getPhone());
+                patient.setDateOfBirth(registerUserDto.getDateOfBirth());
+                patientService.save(patient);
+
+                responseMessages.add("User " + registerUserDto.getUsername() + " registered successfully!");
+            }
+            return new ResponseEntity<>(responseMessages, HttpStatus.OK);
+        } catch (Exception e) {
+            // Nếu có lỗi, rollback giao dịch
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<>("Failed to register users!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
     @PostMapping("/registerDoctor")
     public ResponseEntity<?> registerDoctor(@RequestBody RegisterDTO registerDto) {
         if (userService.existedByUsername(registerDto.getUsername())) {

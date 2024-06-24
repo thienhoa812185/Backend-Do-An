@@ -20,6 +20,8 @@ public class Booking {
 
     private String note;
 
+    private Double price;
+
     @Column(name = "APPOINTMENT_DATE")
     private String appointmentTime;
 

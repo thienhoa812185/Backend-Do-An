@@ -10,6 +10,7 @@ import lombok.*;
 public class BookingDTO {
     private String appointmentTime;
     private String note;
+    private Double price;
     private Integer patientId;
     private Integer doctorScheduleId;
 }

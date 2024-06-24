@@ -1,6 +1,7 @@
 package com.example.clinic.controller;
 
 
+import com.example.clinic.dto.BookingResponseDTO;
 import com.example.clinic.dto.DoctorDTO;
 import com.example.clinic.dto.ScheduleTimeDTO;
 import com.example.clinic.entity.*;
@@ -27,6 +28,8 @@ public class DoctorController {
     private final DoctorService doctorService;
     private final SpecialityService specialityService;
 
+    private final BookingService bookingService;
+
     private final DoctorScheduleService doctorScheduleService;
     private final RoleService roleService;
 
@@ -35,7 +38,7 @@ public class DoctorController {
     private final FileUtils fileUtils;
 
     @Autowired
-    public DoctorController(DoctorService doctorService, FileUtils fileUtils, SpecialityService specialityService, PasswordEncoder passwordEncoder, RoleService roleService, UserService userService, DoctorScheduleService doctorScheduleService) {
+    public DoctorController(DoctorService doctorService, FileUtils fileUtils, SpecialityService specialityService, PasswordEncoder passwordEncoder, RoleService roleService, UserService userService, DoctorScheduleService doctorScheduleService, BookingService bookingService) {
         this.doctorService = doctorService;
         this.fileUtils = fileUtils;
         this.specialityService = specialityService;
@@ -43,6 +46,7 @@ public class DoctorController {
         this.roleService = roleService;
         this.userService = userService;
         this.doctorScheduleService = doctorScheduleService;
+        this.bookingService = bookingService;
     }
 
     @GetMapping("")
@@ -111,6 +115,10 @@ public class DoctorController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteDoctor(@PathVariable Integer id) {
         Doctor doctor = doctorService.getDoctorById(id);
+//        List<BookingResponseDTO> booking = bookingService.getBookingByUsernameUser(doctor.getUsername());
+//        if(booking.size()!=0){
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't delete");
+//        }
         if (doctor != null) {
             doctorService.delete(doctor);
             return ResponseEntity.status(HttpStatus.OK).body("Delete success");
@@ -160,16 +168,22 @@ public class DoctorController {
     }
 
     @PutMapping("/updateInformationDoctor/{id}")
-    public ResponseEntity<?> updateInformationDoctor(@PathVariable Integer id, @RequestParam String name, @RequestParam String description, @RequestParam String education, @RequestParam String experience, @RequestParam Double price) {
+    public ResponseEntity<?> updateInformationDoctor(@PathVariable Integer id, @RequestParam String name, @RequestParam String description, @RequestParam String education, @RequestParam String experience, @RequestParam Double price, @RequestParam String position, @RequestParam String speciality) {
+
         Doctor doctor = doctorService.getDoctorById(id);
         if (doctor == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doctor not found");
         }
+
+        Speciality speciality1 = specialityService.getSpecialityByName(speciality);
+
         doctor.setName(name);
         doctor.setDescription(description);
         doctor.setEducation(education);
         doctor.setExperience(experience);
         doctor.setExamination_Price(price);
+        doctor.setPosition(position);
+        doctor.setSpeciality(speciality1);
 
         doctorService.save(doctor);
         return ResponseEntity.status(HttpStatus.OK).body("Update success!!!!!!!!!");
